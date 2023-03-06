@@ -1,14 +1,19 @@
 import './App.css';
-import Navbar from '../Navbar/Navbar';
+
+import QPortal from '../qPortal/qPortal';
+
+
 
 function App() {
   return (
     <div className="App">
       
-      <Navbar />
-     
+      <QPortal/>
+    
     </div>
   );
 }
 
 export default App;
+
+
