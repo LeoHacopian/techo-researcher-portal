@@ -1,17 +1,28 @@
 import './Navbar.css'
-import { Button, Avatar } from '@mui/material'
+import Logo from "../Logo/Logo"
+import { Button, Avatar, AppBar, IconButton, Toolbar, Typography } from '@mui/material'
 import { useState } from 'react'
+import { Icon } from '@iconify/react';
 
 function Navbar(){
+
     const [number, setNumber] = useState(0)
     function increment(){
         setNumber(number + 1)
     }
+
     return (
         <div className='Navbar'>
-            <Button variant='contained' onClick={increment}>Hello</Button>
-            <div>{number}</div>
-            {/* <Avatar>LH</Avatar> */}
+            <AppBar className='AppBar' position='static'>
+                <Toolbar>
+                    <IconButton>
+                        <Logo />
+                    </IconButton>
+                    <Typography className='Techometer' variant="h5">
+                        TECHOMETER
+                    </Typography>
+                </Toolbar>
+            </AppBar>
         </div>
     )
 }

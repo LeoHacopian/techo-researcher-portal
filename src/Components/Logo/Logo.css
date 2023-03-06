@@ -1,0 +1,18 @@
+.Logo {
+    text-decoration: none;
+    color: inherit;
+}
+
+.Logo:visited {
+    color: #ffffff;
+    transform: scale(1);
+}
+
+.Icon {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+
+.Icon:visited {
+    color: #ffffff;
+}
