@@ -24,9 +24,6 @@ export default class QPortal extends React.Component{
   render(){
     return (
         <div className='qPortal'>
-            <AppBar position='static'>
-                 <h1>Questionnaire Form</h1>
-            </AppBar>
             <Button id="AddButton" variant='outlined' onClick={this.addQuestion}>
                     Add question
             </Button>
