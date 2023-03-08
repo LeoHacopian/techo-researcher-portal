@@ -1,36 +1,26 @@
-import React from "react";
-import {AppBar,Button} from "@mui/material";
+import './qPortal.css';
+import { Button } from '@mui/material';
 import QForm from '../qForm/qForm.js';
+import { useState } from 'react';
 
+export default function QPortal() {
+  const [questions, setQuestions] = useState([]);
 
-export default class QPortal extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      questions: []
-    };
-  }
-  addQuestion = () => {
-    const question = (
-      <QForm
-        key={this.state.questions.length}
-       
-      />
-    );
-    var questions = this.state.questions.slice();
-    questions.push(question);
-    this.setState({ questions: questions });
+  const addQuestion = () => {
+    const question = <QForm key={questions.length} />;
+    const newQuestions = [...questions, question];
+    setQuestions(newQuestions);
   };
-  render(){
-    return (
-        <div className='qPortal'>
-            <Button id="AddButton" variant='outlined' onClick={this.addQuestion}>
-                    Add question
-            </Button>
-            {this.state.questions}
-            <Button>Submit</Button>
-        </div> 
-    )
-  }
-}
 
+  return (
+    <div className='qPortal'>
+      <Button id='AddButton' variant='contained' onClick={addQuestion}>
+        Add question
+      </Button>
+      {questions}
+      <Button id='SubmitButton' variant='contained' color='success'>
+        Submit
+      </Button>
+    </div>
+  );
+}

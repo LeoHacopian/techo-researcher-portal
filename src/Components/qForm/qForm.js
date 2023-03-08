@@ -1,4 +1,4 @@
-
+import './qForm.css'
 import {Button, TextField, MenuItem, Select} from "@mui/material";
 
 
@@ -29,7 +29,7 @@ function QForm(){
         <MenuItem value={'NumberWheel'}>NumberWheel</MenuItem>
         </Select>
 
-        <Button>Delete</Button>
+        <Button variant="Delete">Delete</Button>
         </div>
 
        )
