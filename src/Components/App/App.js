@@ -1,14 +1,12 @@
 import './App.css';
 
-import QPortal from '../qPortal/qPortal';
-
-
+import QForm from '../qForm/qForm';
 
 function App() {
   return (
     <div className="App">
       
-      <QPortal/>
+      <QForm/>
     
     </div>
   );
