@@ -24,9 +24,9 @@ class ApiClient {
     }
 
     // Login Endpoint
-    async question(userInfo) {
-        return await this.request( {endpoint: "/", method: "POST", data: userInfo } )
+    async register(userInfo) {
+        return await this.request( {endpoint: "question/register", method: "POST", data: userInfo } )
     }
 }
 
-export default new ApiClient("http://localhost:3003")
+export default new ApiClient("http://localhost:3005")

@@ -1,0 +1,27 @@
+/* .ButtonContainer {
+    min-height: 100vh;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+} */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+}
+
+.ButtonContainer{
+    margin: 0px auto;
+    width:auto;
+    min-height:50vh;
+    background-color:#fff;
+    display:grid;
+    grid-template-columns: 200px 200px;
+    grid-row: auto auto;
+    grid-column-gap: 125px;
+    grid-row-gap: 20px;
+    justify-content: center;
+    transform: translateY(75px);
+  }
