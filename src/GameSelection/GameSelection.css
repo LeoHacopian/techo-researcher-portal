@@ -1,0 +1,12 @@
+.GameSelection-Button {
+    width: 450px;
+    height: 250px;
+    border-radius: 15px ;
+    border: 7px solid #121D31;
+    background-color: #EDE3D1;
+}
+
+.GameSelection-Button:hover {
+    background-color: #e6d0a8;
+    border: 7px solid #121D31;
+}
