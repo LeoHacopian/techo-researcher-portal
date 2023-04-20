@@ -1,10 +1,40 @@
 import './qForm.css'
-import { Button, MenuItem, Select, TextField } from "@mui/material";
-import React, { useState } from 'react';
+import { Box, Typography, Tabs, Tab, Button, MenuItem, Select, TextField } from "@mui/material";
+import React, { useState, useEffect, useRef} from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
+import QuestionnaireTable from '../QuestionnaireTable/QuestionnaireTable';
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`vertical-tabpanel-${index}`}
+      aria-labelledby={`vertical-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
 function QForm() {
+
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const [questionnaireName, setQuestionnaireName] = useState('');
+
+  const [showTable, setShowTable] = useState(false);
+
+  const tableRef = useRef(null);
 
   const [questions, setQuestions] = useState({
     question: [
@@ -12,8 +42,27 @@ function QForm() {
     ]
   });
 
-  const [questionnaireName, setQuestionnaireName] = useState('');
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tableRef.current && !tableRef.current.contains(event.target)) {
+        setShowTable(false);
+      }
+    };
 
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [tableRef]);
+  
+  const handleChangeTab = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  const toggleTable = () => {
+    setShowTable((prevState) => !prevState);
+  };
 
   const addQuestion = () => {
     setQuestions(prevState => ({
@@ -22,6 +71,7 @@ function QForm() {
         { id: uuidv4(), prompt: '', type: '', answers: [], number: prevState.question.length + 1 },
       ],
     }));
+    setSelectedTab(questions.question.length);
   };
 
   const handleChangeInput = (id, event) => {
@@ -68,20 +118,7 @@ function QForm() {
     });
     
   }
-/*{
- "name": "Questionnaire1",
- "question": [
-  {
-   "number": 1,
-   "prompt": "what is your name",
-   "type": "Button",
-   "answers": [
-    "as",
-    "dhg"
-   ]
-  }
- ]
-}*/
+
   const handleRemoveFields = id => {
     const values = [...questions.question];
     const index = values.findIndex(value => value.id === id);
@@ -91,15 +128,22 @@ function QForm() {
         question.number = i + 1;
       }
     });
+
     setQuestions({ question: values });
+    setSelectedTab(questions.question.length - 2);
   }
 
   return (
-
-    <form className='qPortal'>
+<div>
+    <div>
+      <button onClick={toggleTable}>Preview</button>
+      {showTable && <div ref={tableRef}><QuestionnaireTable questions={questions.question} /></div>}
+    </div>
+    <form align = "center" className='qPortal'>
+ 
       <Button id='AddButton' variant='contained' onClick={addQuestion}>
         Add question
-      </Button>
+      </Button> <hr></hr>
       <TextField
         style={{ width: "200px", margin: "5px" }}
         name="name"
@@ -108,8 +152,18 @@ function QForm() {
         value={questionnaireName}
         onChange={event => setQuestionnaireName(event.target.value)}
       />
-      {questions.question.map(q => (
-        <div key={q.id}>
+      
+      <div className = "portalContainer"> 
+      <div className = "tabsContainer">
+        <Tabs orientation = "vertical" value={selectedTab} onChange={handleChangeTab}>
+        {questions.question.map((q, index) => (
+          <Tab key={q.id} label={`Question ${index + 1}`} /> 
+        ))}
+      </Tabs>
+      </div>
+      <div className = "questionContainer">
+      {questions.question.map((q, index) => (
+           <TabPanel value={selectedTab} index={index}>
           <TextField
             style={{ width: "200px", margin: "5px" }}
             name="prompt"
@@ -138,12 +192,17 @@ function QForm() {
             <MenuItem value={'Number Wheel'}>Number Wheel</MenuItem>
           </Select>
           <Button onClick={() => handleRemoveFields(q.id)}>Delete</Button>
-        </div>
+          </TabPanel>
       ))}
+      </div>
+    </div>
       <Button id='SubmitButton' variant='contained' color='success' onClick={handleSubmit}>
         Submit
       </Button>
+      
     </form>
+
+    </div>
   );
 }
 

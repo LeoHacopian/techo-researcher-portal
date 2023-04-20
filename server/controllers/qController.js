@@ -1,34 +1,29 @@
 const Questionnaire = require("../models/questionnaire.model")
 const async = require("async")
 
-
-//gets our object but request continues
-//FIXED: it was because I wasn't actually sending a response back
-//fixed with res.send(results.qs)
 exports.detail = (req, res, next) => {
     async.parallel(
-        {
-            qs(callback) {
-                Questionnaire.findOne({name: req.params.name}).exec(callback)
-            }
+      {
+        qs(callback) {
+          Questionnaire.findOne({ name: req.params.name }).exec(callback);
         },
-        (err, results) => {
-            if (err) {
-              return next(err);
-            }
-            if (results.qs == null) {
-              // No results.
-              const err = new Error("Questionnaire not found");
-              err.status = 404;
-              return next(err);
-            }
-            // Successful, so send response, but what about displaying it?
-            res.send(results.qs)
-          }
+      },
+      (err, results) => {
+        if (err) {
+          console.error(err); // Log the error
+          return res.status(500).json({ message: "Something went wrong" }); // Send error message to client
+        }
+        if (results.qs == null) {
+          const err = new Error("Questionnaire not found");
+          err.status = 404;
+          console.error(err); // Log the error
+          return res.status(404).json({ message: "Questionnaire not found" }); // Send error message to client
+        }
+        res.send(results.qs);
+      }
     );
-};
-
-
+  };
+  
 //create a new Questionnaire 
 exports.register = async (req, res) => {
     //basic validation

@@ -7,6 +7,8 @@ const app = express()
 const { mongoose, db } = require("./database")
 const Questionnaire = require("./routes/questionnaire.route")
 
+const port = process.env.PORT || 5000;
+
 app.use(cors())
 app.use(express.json())
 
@@ -20,7 +22,9 @@ app.get("/", (req, res) => {
 })
 
 // start the Express server
-app.listen(5000, () => {
-    console.log("Server started on port http://localhost:5000")
-})
+const server = app.listen(5000, () => {
+    const address = server.address();
+    console.log(`Server started on port http://localhost:${address.port}`);
+  });
+  
 //test
