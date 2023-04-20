@@ -1,18 +1,20 @@
 import './FormCreation.css'
-import { Button, Box, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { Field, Form, Formik} from 'formik'
+import { Button, Box, TextField, Select, MenuItem, FormControl, InputLabel, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
+import { Field, Form, Formik, useFormikContext} from 'formik'
 import {object, string} from 'yup'
 import { useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import apiClient from '../Services/apiClient';
 import * as Yup from 'yup';
 
+
+
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Form Name is required"),
   questions: Yup.array().of(Yup.object().shape({
     prompt: Yup.string().required("Question prompt is required"),
     type: Yup.string().required("Question type is required"),
-    answers: Yup.array().of(Yup.string().required("Answer is required")).min(2, "At least 2 answers are required"),
+    answer: Yup.array().of(Yup.string().required("Answer is required")).min(2, "At least 2 answers are required"),
   })),
 });
 
@@ -20,17 +22,28 @@ export default function FormCreation() {
 
   const initialValues = {
     name: '',
+    questions: '',
     prompt: '',
-    answer: '',
-    type: ''
+    type: '',
+    answer: [],
   }
 
   const [status, setStatus] = useState(undefined)
+  const [results, setResults] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+
+
+
 
   // initializes the state of the forms to a default question that matches the schema
   const [questions, setQuestions] = useState([
     { id: uuidv4(), number: 1, prompt: '', type: '', answers: [] },
   ]);
+
+  const handleDialogToggle = () => {
+    setOpenDialog(!openDialog);
+  };
+  
   
 
   // initializes the state of the forms name to an empty string
@@ -45,20 +58,20 @@ export default function FormCreation() {
   //   }));
   // };
 
-  const handleChangeInput = (event) => {
-    const newQuestions = questions.question.map((i, index) => {
-      if (i.id === event.target.id) { // Use event.target.id instead of id
-        if (event.target.name === "answers") {
-          i.answers = event.target.value.split(",");
-        } else {
-          i[event.target.name] = event.target.value;
-        }
-        i.number = index + 1; // Update the question number based on its index
-      }
-      return i;
-    });
-    setQuestions({ question: newQuestions });
-  }
+  // const handleChangeInput = (event) => {
+  //   const newQuestions = questions.question.map((i, index) => {
+  //     if (i.id === event.target.id) { // Use event.target.id instead of id
+  //       if (event.target.name === "answers") {
+  //         i.answers = event.target.value.split(",");
+  //       } else {
+  //         i[event.target.name] = event.target.value;
+  //       }
+  //       i.number = index + 1; // Update the question number based on its index
+  //     }
+  //     return i;
+  //   });
+  //   setQuestions({ question: newQuestions });
+  // }
 
   // const handleSubmit = async (event) => {
 
@@ -75,7 +88,24 @@ export default function FormCreation() {
     
   // };
 
+  const handleNext = (formik) => {
+    console.log('formik.values:', formik.values);
+    const newResults = [...results, formik.values];
+    setResults(newResults);
+    formik.resetForm({ values: initialValues });
+  };
+  
+
+  const handleBack = (formik) => {
+    const newResults = results.slice(0, -1);
+    setResults(newResults);
+    formik.resetForm({ values: initialValues });
+
+  }
+  
+
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
+    
     // Flatten the answers array for each question
     const flattenedQuestions = questions.map((q) => {
       const flattenedAnswers = q.answers.flat();
@@ -114,7 +144,7 @@ export default function FormCreation() {
   
 
   return (
-    <div className="Form-Container">
+    <div className="Form-Container fixed" style={{ position: 'sticky' }}>
       <Formik 
         initialValues={initialValues}
         validationSchema={validationSchema} 
@@ -126,7 +156,7 @@ export default function FormCreation() {
               name="name" 
               type="text" 
               as={TextField} 
-              varaint="outlined" 
+              variant="outlined" 
               color="primary" 
               label="Form Name" 
               fullWidth
@@ -134,7 +164,7 @@ export default function FormCreation() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
+              helpertext={formik.touched.name && formik.errors.name}
               />
             <Box height={15} />
             {questions.map((q, index) => (
@@ -143,38 +173,41 @@ export default function FormCreation() {
                   name={`questions[${index}].prompt`}
                   type="text" 
                   as={TextField} 
-                  varaint="outlined" 
+                  variant="outlined" 
                   color="primary" 
                   label="Question" 
                   fullWidth
                   value={q.prompt}
                   onChange={(event) => {
+                    formik.handleChange(event);
                     const newQuestions = [...questions];
                     newQuestions[index].prompt = event.target.value;
                     setQuestions(newQuestions);
+                    console.log('questions:', newQuestions);
                   }}
                   onBlur={formik.handleBlur}
-                  error={formik.touched.questions && Boolean(formik.errors.questions)}
-                  helperText={formik.touched.questions && formik.errors.questions}
+                  error={formik.touched.questions?.[index]?.prompt && Boolean(formik.errors.questions?.[index]?.prompt)}
+                  helpertext={formik.touched.questions?.[index]?.prompt && formik.errors.questions?.[index]?.prompt}
                 />
                 <Box height={15} />
                 <Field 
                   name={`questions[${index}].answers`}
                   type="text" 
                   as={TextField} 
-                  varaint="outlined" 
+                  variant="outlined" 
                   color="primary" 
                   label="Answer(s)" 
                   fullWidth
-                  value={q.answers.join(",")}
+                  value={q.answers.join(", ")}
                   onChange={(event) => {
+                    formik.handleChange(event);
                     const newQuestions = [...questions];
-                    newQuestions[index].answers = event.target.value.split(",");
+                    newQuestions[index].answers = event.target.value.split(/,\s*/);
                     setQuestions(newQuestions);
                   }}
                   onBlur={formik.handleBlur}
                   error={formik.touched.questions && Boolean(formik.errors.questions)}
-                  helperText={formik.touched.questions && formik.errors.questions}
+                  helpertext={formik.touched.questions && formik.errors.questions}
                 />
                 <Box height={15} />
                 <FormControl fullWidth>
@@ -188,13 +221,14 @@ export default function FormCreation() {
                     label="Type"
                     value={q.type}
                     onChange={(event) => {
+                      formik.handleChange(event);
                       const newQuestions = [...questions];
                       newQuestions[index].type = event.target.value;
                       setQuestions(newQuestions);
                     }}
                     onBlur={formik.handleBlur}
                     error={formik.touched.questions && Boolean(formik.errors.questions)}
-                    helperText={formik.touched.questions && formik.errors.questions}
+                    helpertext={formik.touched.questions && formik.errors.questions}
                   >
                     <MenuItem value={'Checkbox'}>Checkbox</MenuItem>
                     <MenuItem value={'Radio Button'}>Radio Button</MenuItem>
@@ -202,12 +236,56 @@ export default function FormCreation() {
                   </Field>
                 </FormControl>
                 <Box height={20} />
-                <Button type="submit" variant='contained' color='primary' size='large' disabled={formik.isSubmitting}>Submit</Button>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Button variant='contained' color='primary' onClick={() => handleBack(formik)}>Back</Button>
+                  <Button variant='contained' color='primary' onClick={() => handleNext(formik)}>Next</Button>
+                </div>
+                <Button style={{ 
+                  position: 'fixed', 
+                  bottom: 0, 
+                  right: 0, 
+                  margin: '1rem' 
+                  }}
+                  type="submit" 
+                  variant='contained' 
+                  color='primary' 
+                  size='large' 
+                  disabled={formik.isSubmitting}>Submit</Button>
+                <Button style={{
+                  position: 'fixed',
+                  bottom: 0,
+                  left: 0,
+                  margin: '1rem'
+                }} variant="contained" color="primary" onClick={handleDialogToggle}>
+                  Review Questions
+                </Button>
               </div>
             ))}
           </Form>
         )}
       </Formik>
+      <Dialog open={openDialog} onClose={handleDialogToggle}>
+        <DialogTitle>Review Questions</DialogTitle>
+        <DialogContent>
+          {questions.map((q, index) => (
+            <DialogContentText key={q.id}>
+              <strong>Question {index + 1}:</strong> {q.prompt}
+              <br />
+              <strong>Answers:</strong> {q.answers.join(", ")}
+              <br />
+              <strong>Type:</strong> {q.type}
+              <br />
+            </DialogContentText>
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Box display="flex" justifyContent="center" width="100%">
+            <Button onClick={handleDialogToggle} variant="contained" color="primary">
+              Close
+            </Button>
+          </Box>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }
