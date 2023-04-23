@@ -1,34 +1,17 @@
 import './qForm.css'
-import { Box, Typography, Tabs, Tab, Button, MenuItem, Select, TextField } from "@mui/material";
-import React, { useState, useEffect, useRef} from 'react';
+import { Button, MenuItem, Select, TextField } from "@mui/material";
+import React, { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
 import QuestionnaireTable from '../QuestionnaireTable/QuestionnaireTable';
+import GenericTabPanel from '../GenericTabPanel/GenericTabPanel';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
 
-function QForm() {
+function QForm(props) {
 
-  const [selectedTab, setSelectedTab] = useState(0);
+  const { value, setValue } = props;
 
   const [questionnaireName, setQuestionnaireName] = useState('');
 
@@ -38,7 +21,7 @@ function QForm() {
 
   const [questions, setQuestions] = useState({
     question: [
-      { id: uuidv4(), number:'1', prompt: '',  type: '' , answers: [],},
+      { id: uuidv4(), number: '1', prompt: '', type: '', answers: [], },
     ]
   });
 
@@ -55,10 +38,7 @@ function QForm() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [tableRef]);
-  
-  const handleChangeTab = (event, newValue) => {
-    setSelectedTab(newValue);
-  };
+
 
   const toggleTable = () => {
     setShowTable((prevState) => !prevState);
@@ -71,13 +51,15 @@ function QForm() {
         { id: uuidv4(), prompt: '', type: '', answers: [], number: prevState.question.length + 1 },
       ],
     }));
-    setSelectedTab(questions.question.length);
+
+    console.log(questions.question.length);
+
   };
 
   const handleChangeInput = (id, event) => {
     const newQuestions = questions.question.map((i, index) => {
       if (id === i.id) {
-      
+
         if (event.target.name === "answers") {
           i.answers = event.target.value.split(",");
         } else {
@@ -107,16 +89,16 @@ function QForm() {
 
     const questionsWithoutId = questions.question.map(({ id, ...rest }) => rest);
     const questionnaire = { name: questionnaireName, question: questionsWithoutId };
-    console.log(JSON.stringify(questionnaire,null,1));
-   
+    console.log(JSON.stringify(questionnaire, null, 1));
+
     axios.post('http://localhost:5000/questionnaire/register', questionnaire)
-    .then(response => {
-      console.log('Questionnaire submitted successfully:', response);
-    })
-    .catch(error => {
-      console.error('Error submitting questionnaire:', error);
-    });
-    
+      .then(response => {
+        console.log('Questionnaire submitted successfully:', response);
+      })
+      .catch(error => {
+        console.error('Error submitting questionnaire:', error);
+      });
+
   }
 
   const handleRemoveFields = id => {
@@ -130,80 +112,89 @@ function QForm() {
     });
 
     setQuestions({ question: values });
-    setSelectedTab(questions.question.length - 2);
+    //  setSelectedTab(questions.question.length - 2);
   }
 
   return (
-<div>
     <div>
-      <button onClick={toggleTable}>Preview</button>
-      {showTable && <div ref={tableRef}><QuestionnaireTable questions={questions.question} /></div>}
-    </div>
-    <form align = "center" className='qPortal'>
- 
-      <Button id='AddButton' variant='contained' onClick={addQuestion}>
-        Add question
-      </Button> <hr></hr>
-      <TextField
-        style={{ width: "200px", margin: "5px" }}
-        name="name"
-        type="text"
-        label="Questionnaire Name"
-        value={questionnaireName}
-        onChange={event => setQuestionnaireName(event.target.value)}
-      />
-      
-      <div className = "portalContainer"> 
-      <div className = "tabsContainer">
-        <Tabs orientation = "vertical" value={selectedTab} onChange={handleChangeTab}>
-        {questions.question.map((q, index) => (
-          <Tab key={q.id} label={`Question ${index + 1}`} /> 
-        ))}
-      </Tabs>
+      <div>
+        <button onClick={toggleTable}>Preview</button>
+        {showTable && (
+          <div ref={tableRef}>
+            <QuestionnaireTable questions={questions.question} />
+          </div>
+        )}
       </div>
-      <div className = "questionContainer">
-      {questions.question.map((q, index) => (
-           <TabPanel value={selectedTab} index={index}>
-          <TextField
-            style={{ width: "200px", margin: "5px" }}
-            name="prompt"
-            type="text"
-            label="Question"
-            value={q.prompt}
-            onChange={event => handleChangeInput(q.id, event)}
-          />
-          <TextField
-            style={{ width: "200px", margin: "5px" }}
-            name="answers"
-            type="text"
-            label="Answer Choices"
-            value={q.answers}
-            onChange={event => handleChangeInput(q.id, event)}
-          />
-          <Select
-            style={{ width: "170px", margin: "5px" }}
-            name="type"
-            label="Question Type"
-            value={q.type}
-            onChange={event => handleChangeInput(q.id, event)}
-          >
-            <MenuItem value={'Checkbox'}>Checkbox</MenuItem>
-            <MenuItem value={'Radio Button'}>Radio Button</MenuItem>
-            <MenuItem value={'Number Wheel'}>Number Wheel</MenuItem>
-          </Select>
-          <Button onClick={() => handleRemoveFields(q.id)}>Delete</Button>
-          </TabPanel>
-      ))}
-      </div>
-    </div>
-      <Button id='SubmitButton' variant='contained' color='success' onClick={handleSubmit}>
-        Submit
-      </Button>
-      
-    </form>
 
+      <div className="questionnaire-container">
+        <form className="qPortal">
+          <div className="wrapper">
+            <div className="top-navbar">
+
+              <TextField
+                style={{ width: "200px", margin: "5px" }}
+                name="name"
+                type="text"
+                label="Questionnaire Name"
+                value={questionnaireName}
+                onChange={(event) => setQuestionnaireName(event.target.value)}
+              />
+            </div>
+            <GenericTabPanel content={questions.question.map((q, index) => ({
+              label: `Question ${index + 1}`,
+              content: (
+                <>
+                  <TextField
+                    style={{ width: "230px", margin: "5px" }}
+                    name="prompt"
+                    type="text"
+                    label="Question"
+                    value={q.prompt}
+                    onChange={event => handleChangeInput(q.id, event)}
+                  />
+                  <TextField
+                    style={{ width: "230px", height: "400", margin: "5px" }}
+                    name="answers"
+                    type="text"
+                    label="Answer Choices"
+                    value={q.answers}
+                    onChange={event => handleChangeInput(q.id, event)}
+                  />
+                  <Select
+                    style={{ width: "170px", margin: "5px" }}
+                    name="type"
+                    label="Question Type"
+                    value={q.type}
+                    onChange={event => handleChangeInput(q.id, event)}
+                  >
+                    <MenuItem value={'Checkbox'}>Checkbox</MenuItem>
+                    <MenuItem value={'Radio Button'}>Radio Button</MenuItem>
+                    <MenuItem value={'Number Wheel'}>Number Wheel</MenuItem>
+                  </Select>
+                  <Button onClick={() => handleRemoveFields(q.id)}>Delete</Button>
+
+                </>
+              )
+            }))} />
+            <div className="bottom-navbar">
+
+              <Button id="AddButton" variant="contained" onClick={addQuestion}>
+                Add question
+              </Button>
+              <Button
+                id="SubmitButton"
+                variant="contained"
+                color="success"
+                onClick={handleSubmit}>
+                Submit
+              </Button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
+
 }
 
 export default QForm

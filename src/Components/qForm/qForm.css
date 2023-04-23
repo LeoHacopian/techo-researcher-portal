@@ -12,18 +12,32 @@
     margin-left: 20px;
 }
 
-.portalContainer {
+
+.questionnaire-container {
     display: flex;
-    flex-direction: row;
     justify-content: center;
-  }
-  
-.tabsContainer {
-    order: 1;
-    margin-top: 30px;
+    background-color: yellow;
+    height: 100%;
+    
 }
-  
-.questionContainer{
-    order: -1;
+
+.wrapper {
+    position: relative;
+}
+
+.bottom-navbar {
+    position: absolute;
+    background-color: blue;
+    width: 86%;
+    height: 80px;
+    bottom: 0;
+}
+
+.top-navbar {
+    position: absolute;
+    top: 0px;
+    width: 86%;
+    height: 70px;
+    background-color: rgb(169, 169, 210);
 
 }
