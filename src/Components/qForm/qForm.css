@@ -21,13 +21,18 @@
     
 }
 
+.qPortal{
+    display: flex;
+    flex-direction: column;
+}
 .wrapper {
     position: relative;
+    background-color: #EDE3D1;
 }
 
 .bottom-navbar {
     position: absolute;
-    background-color: blue;
+    background-color: green;
     width: 86%;
     height: 80px;
     bottom: 0;
@@ -37,7 +42,7 @@
     position: absolute;
     top: 0px;
     width: 86%;
-    height: 70px;
-    background-color: rgb(169, 169, 210);
+    height: 100px;
+    background-color: orange;
 
 }

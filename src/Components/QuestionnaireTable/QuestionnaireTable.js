@@ -3,12 +3,12 @@ import React from 'react';
 
 function QuestionnaireTable({ questions }) {
   return (
-    <TableContainer component={Paper} style={{ width: '50%' }}>
+    <TableContainer component={Paper} style={{ width: '50%', zIndex: 1, position: 'fixed' }}>
       <Table sx={{ Width: 150 }} aria-label="QuestionTable">
         <TableHead>
           <TableRow>
             <TableCell align="left">Number</TableCell>
-            <TableCell align="left">Questions</TableCell>
+            <TableCell align="left">Question</TableCell>
             <TableCell align="left">Answer Choices</TableCell>
             <TableCell align="left">Answer Type</TableCell>
           </TableRow>

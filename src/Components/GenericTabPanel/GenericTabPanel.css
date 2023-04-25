@@ -1,8 +1,9 @@
 .tabbed-window-container{
     display: flex;
-    background-color: rgb(222, 110, 110);
+    background-color: rgb(212, 79, 212);
     margin: auto;
     align-items: center;
+    justify-content: center;
     width: 100%; /* set the width to 100% to fill the container */
     min-width: 800px;
 }
@@ -10,9 +11,8 @@
 .tabs-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     order: 1;
-    background-color: #EDE3D1;
+    background-color: rgb(234, 204, 237);
     min-height: 80px; /* set a minimum height in pixels */
     max-height: 500px;
     flex: 1; /* make the container grow to fill the available space */
@@ -23,7 +23,8 @@
 .tabpanel-container{
     display: flex;
     align-items: center;
-    background-color: #76abc1;
+    justify-content: center;
+    background-color: rgb(239, 220, 220);
     align-self: center;
     height: 500px; /* set a fixed height in pixels */
     flex: 3; /* make the container grow to fill the available space */

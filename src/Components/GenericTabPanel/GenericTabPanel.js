@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
-import { TabScrollButton, Box, Typography, Tabs, Tab } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, Typography, Tabs, Tab } from '@mui/material';
 import './GenericTabPanel.css'
 
 function GenericTabPanel({ content, ...otherProps }) {
   const [value, setValue] = useState(0);
+
+  const prevContentLength = useRef(content.length);
+
+  useEffect(() => {
+    if (content.length > prevContentLength.current || content.length < prevContentLength.current) {
+      setValue(content.length - 1);
+    }
+    prevContentLength.current = content.length;
+  }, [content]);
+
 
   const handleTabChange = (event, newValue) => {
     setValue(newValue);
@@ -18,10 +28,14 @@ function GenericTabPanel({ content, ...otherProps }) {
         value={value}
         onChange={handleTabChange}
         aria-label="Vertical tabs"
+        TabIndicatorProps={{
+          style: { background: "grey"}
+        }}
         sx={{ borderRight: 1, borderColor: 'divider', height: '100%' }}
       >
         {content.map((tab, index) => (
-          <Tab key={index} label={tab.label} {...a11yProps(index)} />
+          <Tab key={index} label={tab.label} {...a11yProps(index)} 
+          sx={{ '&.Mui-selected': { color: '#424242' } }} />
         ))}
       </Tabs>
 
