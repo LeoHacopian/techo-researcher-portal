@@ -14,35 +14,60 @@
 
 
 .questionnaire-container {
-    display: flex;
-    justify-content: center;
-    background-color: yellow;
-    height: 100%;
-    
+  display: flex;
+  position: relative;
+  flex-direction: column; /* this makes the container a column flex container */
+  justify-content: flex-start; /* aligns the content to the top of the container */
+  align-items: center; /* centers the content horizontally */
+  background-color: #EDE3D1;
+  min-height: 100vh; /* ensures the container takes up the full height of the viewport */
+
 }
 
-.qPortal{
+.qPortal {
     display: flex;
     flex-direction: column;
-}
+    height: 300px; /* Set a fixed height */
+    overflow-y: scroll; /* Add a scrollbar when needed */
+  }
+  
+
 .wrapper {
     position: relative;
     background-color: #EDE3D1;
 }
 
+.tabContentWrapper{
+    background-color: white;
+    border: 1px solid #444;
+    margin-bottom: 20px;
+}
+
+.top-navbar {
+    position: relative;
+    top: 0px;
+    height: 100px;
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #444;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+}
+
 .bottom-navbar {
-    position: absolute;
+    position: relative;
     background-color: green;
-    width: 86%;
     height: 80px;
     bottom: 0;
 }
 
-.top-navbar {
-    position: absolute;
-    top: 0px;
-    width: 86%;
-    height: 100px;
-    background-color: orange;
+.options {
+    position: relative;
+  }
+  
+ 
 
-}
+
+
+ 

@@ -3,22 +3,18 @@ import './qForm.css'
 import { IconButton, Button, MenuItem, Select, TextField } from "@mui/material";
 import ClearIcon from '@mui/icons-material/Clear';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
 
 import axios from 'axios';
 
-import QuestionnaireTable from '../QuestionnaireTable/QuestionnaireTable';
 import GenericTabPanel from '../GenericTabPanel/GenericTabPanel';
 
-function QForm() {
+function QForm({ questionsData, setQuestionsData }) {
 
   const [questionnaireName, setQuestionnaireName] = useState('');
 
-  const [showTable, setShowTable] = useState(false);
-
-  const tableRef = useRef(null);
 
   const [questions, setQuestions] = useState({
     question: [
@@ -27,22 +23,11 @@ function QForm() {
   });
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (tableRef.current && !tableRef.current.contains(event.target)) {
-        setShowTable(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [tableRef]);
-
-  const toggleTable = () => {
-    setShowTable((prevState) => !prevState);
-  };
+    const updatedQuestionsData = { ...questionsData, questions: { ...questions } };
+    setQuestionsData(updatedQuestionsData);
+    console.log(questionsData)
+  }, [questions, setQuestionsData]);
+  
 
   const addQuestion = () => {
     setQuestions(prevState => ({
@@ -69,8 +54,29 @@ function QForm() {
         }
       })
     }));
+
   };
 
+  const handleSliderRangeError = (q) => {
+    if (q.type === "Slider" && q.answers[0].answer !== "" && q.answers[1].answer !== "") {
+      const minValue = q.answers[0].answer;
+      const maxValue = q.answers[1].answer;
+  
+      if (isNaN(minValue) || isNaN(maxValue)) {
+        alert("Invalid slider data: input values must be numerical.");
+        return true;
+      }
+      
+      if (Number(minValue) > Number(maxValue)) {
+        alert("Invalid slider data: minimum value is greater than maximum value.");
+        return true;
+      }
+    }
+    return false;
+  };
+  
+  
+  
   const handleChangeInput = (id, index, event) => {
     const { name, value } = event.target;
     const updatedQuestions = questions.question.map((q) => {
@@ -78,6 +84,9 @@ function QForm() {
         if (name === 'prompt') {
           return { ...q, prompt: value };
         } else if (name === 'type') {
+          if (value === 'Slider') {
+            return { ...q, type: value, answers: [{ answer: '', id: uuidv4() }, { answer: '', id: uuidv4() }] };
+          }
           return { ...q, type: value };
         } else if (name.includes('answers')) {
           const updatedAnswers = q.answers.map((a, i) => {
@@ -86,31 +95,47 @@ function QForm() {
             }
             return a;
           });
-          return { ...q, answers: updatedAnswers };
+          const updatedQuestion = { ...q, answers: updatedAnswers };
+          if (!handleSliderRangeError(updatedQuestion)) {
+            return updatedQuestion; // return the updated question only if there was no error
+          }
         }
       }
       return q;
     });
     setQuestions({ question: updatedQuestions });
   };
-
+  const checkEmptyFields = () => {
+    const emptyFields = [];
+  
+    questions.question.forEach((question, questionIndex) => {
+      if (question.prompt === '') {
+        emptyFields.push(`Question ${questionIndex + 1} - Prompt`);
+      }
+      if (question.type === '') {
+        emptyFields.push(`Question ${questionIndex + 1} - Type`);
+      }
+      question.answers.forEach((answer, answerIndex) => {
+        if (answer.answer === '') {
+          emptyFields.push(`Question ${questionIndex + 1} - Answer ${answerIndex + 1}`);
+        }
+      });
+    });
+  
+    if (emptyFields.length > 0) {
+      const errorMessage = `The following fields are empty:\n${emptyFields.join('\n')}`;
+  
+      alert(errorMessage);
+    } else {
+      alert('All fields have been filled.');
+    }
+  };
+  
+  
   const handleSubmit = () => {
-    if (questionnaireName.trim() === '') {
-      alert('Please enter questionnaire name');
-      return;
-    }
-    const isComplete = questions.question.every(
-      (question) =>
-        question.prompt.length > 0 &&
-        question.answers.length > 0 &&
-        question.type.length > 0
-    );
-    // If any field is missing a value, prevent submission
-    if (!isComplete) {
-      alert('Please fill out all fields');
-      return;
-    }
-
+   
+    checkEmptyFields();
+    
     const questionsWithoutId = questions.question.map(({ id, ...rest }) => rest);
     const questionnaire = {
       name: questionnaireName,
@@ -147,7 +172,17 @@ function QForm() {
     });
 
     setQuestions({ question: values });
+ 
   }
+
+  const getLabel = (q, index) => {
+    if (q.type === "Slider") {
+      return index === 0 ? "Min" : "Max";
+    } else {
+      return `Option ${index + 1}`;
+    }
+  }
+
 
   const handleRemoveOption = (questionId, answerId) => {
     setQuestions(prevState => ({
@@ -162,34 +197,23 @@ function QForm() {
         }
       })
     }));
-  }
-
-
+  };
   return (
     <div>
-
-      <button onClick={toggleTable}>Preview</button>
-      {showTable && (
-        <div ref={tableRef}>
-          <QuestionnaireTable questions={questions.question} />
-        </div>
-      )}
-
-
       <div className="questionnaire-container">
-
         <div className="wrapper">
           <div className="top-navbar">
             <TextField
               style={{ width: "200px", margin: "5px" }}
               name="name"
+              variant="standard"
               type="text"
               label="Questionnaire Name"
               value={questionnaireName}
               onChange={(event) => setQuestionnaireName(event.target.value)}
-            />
+            />      
           </div>
-
+        <div className="tabContentWrapper">
           <GenericTabPanel content={questions.question.map((q, index) => ({
             label: `Question ${index + 1}`,
             content: (
@@ -210,42 +234,45 @@ function QForm() {
                   onChange={event => handleChangeInput(q.id, index, event)}
                 >
                   <MenuItem value={'Checkbox'}>Checkbox</MenuItem>
-                  <MenuItem value={'Radio Button'}>Radio Button</MenuItem>
-                  <MenuItem value={'Number Wheel'}>Number Wheel</MenuItem>
+                  <MenuItem value={'Slider'}>Slider</MenuItem>
                 </Select>
                 <Button onClick={() => handleRemoveFields(q.id)}>Delete</Button>
                 <form className="qPortal">
                   {q.answers.map((answer, index) => (
-                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div className = "options" style={{ display: 'flex', flexDirection: 'row' }}>
                       <TextField
                         key={answer.id}
                         style={{ width: "230px", margin: "5px" }}
                         name={`answers[${index}]`}
                         type="text"
-                        label={`Option ${index + 1}`}
+                        label={getLabel(q, index)}
                         value={answer.answer}
                         onChange={event => handleChangeInput(q.id, index, event)}
                       />
+                      
                       <div style={{ alignSelf: "center" }}>
+                      {q.type !== "Slider" && (
                         <IconButton onClick={() => handleRemoveOption(q.id, answer.id)}>
                           <ClearIcon />
                         </IconButton>
+                         )}
                       </div>
                     </div>
                   ))}
+               {q.type !== "Slider" && (
                   <TextField
-                    style={{ width: "120px", margin: "5px" }}
-                    label="Add Option"
-                    onClick={() => addAnswer(q.id)}
+                  style={{ width: "120px", margin: "5px" }}
+                  label="Add Option"
+                  variant="standard"
+                  onClick={() => addAnswer(q.id)}
                   />
-
+                )}
                 </form>
               </>
             )
           }))} />
-
+            </div>
           <div className="bottom-navbar">
-
             <Button id="AddButton" variant="contained" onClick={addQuestion}>
               Add question
             </Button>

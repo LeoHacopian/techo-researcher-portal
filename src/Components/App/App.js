@@ -1,17 +1,13 @@
+// App.js
+import QPortalNavbar from '../QPortalNavbar/QPortalNavbar';
 import './App.css';
-
-import QForm from '../qForm/qForm';
 
 function App() {
   return (
     <div className="App">
-      
-      <QForm/>
-    
+    <QPortalNavbar/>
     </div>
   );
 }
 
 export default App;
-
-
