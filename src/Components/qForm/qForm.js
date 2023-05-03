@@ -10,11 +10,17 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
 import GenericTabPanel from '../GenericTabPanel/GenericTabPanel';
+import ErrorMessageSnackbar from '../ErrorMessageSnackbar/ErrorMessageSnackbar';
 
 function QForm({ questionsData, setQuestionsData }) {
 
   const [questionnaireName, setQuestionnaireName] = useState('');
 
+  const [openErrorMessage, setOpenErrorMessage]= useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const [openSliderErrorMessage, setOpenSliderErrorMessage]= useState(false);
+  const [sliderErrorMessage, setSliderErrorMessage]= useState('');
 
   const [questions, setQuestions] = useState({
     question: [
@@ -63,18 +69,19 @@ function QForm({ questionsData, setQuestionsData }) {
       const maxValue = q.answers[1].answer;
   
       if (isNaN(minValue) || isNaN(maxValue)) {
-        alert("Invalid slider data: input values must be numerical.");
+        setSliderErrorMessage("Invalid slider data: input values must be numerical.");
+        setOpenSliderErrorMessage(true);
         return true;
       }
       
       if (Number(minValue) > Number(maxValue)) {
-        alert("Invalid slider data: minimum value is greater than maximum value.");
+        setSliderErrorMessage("Invalid slider data: minimum value is greater than maximum value.");
+        setOpenSliderErrorMessage(true);
         return true;
       }
     }
     return false;
   };
-  
   
   
   const handleChangeInput = (id, index, event) => {
@@ -105,9 +112,13 @@ function QForm({ questionsData, setQuestionsData }) {
     });
     setQuestions({ question: updatedQuestions });
   };
+
   const checkEmptyFields = () => {
     const emptyFields = [];
   
+    if(questionnaireName === ''){
+      emptyFields.push('Questionnaire Name \n')
+    }
     questions.question.forEach((question, questionIndex) => {
       if (question.prompt === '') {
         emptyFields.push(`Question ${questionIndex + 1} - Prompt`);
@@ -120,21 +131,23 @@ function QForm({ questionsData, setQuestionsData }) {
           emptyFields.push(`Question ${questionIndex + 1} - Answer ${answerIndex + 1}`);
         }
       });
+      emptyFields.push('\n'); 
     });
   
-    if (emptyFields.length > 0) {
-      const errorMessage = `The following fields are empty:\n${emptyFields.join('\n')}`;
-  
-      alert(errorMessage);
-    } else {
-      alert('All fields have been filled.');
-    }
+    return emptyFields;
   };
   
   
   const handleSubmit = () => {
    
-    checkEmptyFields();
+    const emptyFields = checkEmptyFields();
+    if (emptyFields.length > 0) {
+      const errorMessage = `The following fields are empty: \n ${emptyFields.join(' ')}`;
+      setErrorMessage(errorMessage);
+      setOpenErrorMessage(true);
+      console.log(openErrorMessage)
+      return;
+    }
     
     const questionsWithoutId = questions.question.map(({ id, ...rest }) => rest);
     const questionnaire = {
@@ -200,6 +213,16 @@ function QForm({ questionsData, setQuestionsData }) {
   };
   return (
     <div>
+       <ErrorMessageSnackbar
+      open={openErrorMessage}
+      message={errorMessage}
+      onClose={() => setOpenErrorMessage(false)}
+    />
+     <ErrorMessageSnackbar
+      open={openSliderErrorMessage}
+      message={sliderErrorMessage}
+      onClose={() => setOpenSliderErrorMessage(false)}
+    />
       <div className="questionnaire-container">
         <div className="wrapper">
           <div className="top-navbar">

@@ -1,0 +1,30 @@
+.Form-Container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.Question-Container{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 50%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+}
+
+.label-answer {
+    display: flex;
+    border-bottom: 1px solid #ccc; /* Add a thin border at the bottom */
+    padding-bottom: 5px;
+}
+
+.RadioButton-Input {
+    margin-right: 5px;
+}
