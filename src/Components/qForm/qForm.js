@@ -11,6 +11,7 @@ import axios from 'axios';
 
 import GenericTabPanel from '../GenericTabPanel/GenericTabPanel';
 import ErrorMessageSnackbar from '../ErrorMessageSnackbar/ErrorMessageSnackbar';
+import SignUpModal from '../SignUpModal/SignUpModal';
 
 function QForm({ questionsData, setQuestionsData }) {
 
@@ -21,6 +22,16 @@ function QForm({ questionsData, setQuestionsData }) {
 
   const [openSliderErrorMessage, setOpenSliderErrorMessage]= useState(false);
   const [sliderErrorMessage, setSliderErrorMessage]= useState('');
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
 
   const [questions, setQuestions] = useState({
     question: [
@@ -218,6 +229,10 @@ function QForm({ questionsData, setQuestionsData }) {
   };
   return (
     <div>
+      <Button variant="contained" onClick={handleModalOpen}>
+        Sign Up
+      </Button>
+      <SignUpModal isOpen={isModalOpen} onClose={handleModalClose} />
        <ErrorMessageSnackbar
       open={openErrorMessage}
       message={errorMessage}

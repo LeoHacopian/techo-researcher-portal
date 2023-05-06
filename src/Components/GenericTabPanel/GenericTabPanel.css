@@ -15,7 +15,6 @@
     order: 1;
     background-color: default;
     min-height: 80px; /* set a minimum height in pixels */
-
     flex: 1; /* make the container grow to fill the available space */
     max-width: 200px; /* set the maximum width to 800 pixels */
 }
@@ -26,7 +25,7 @@
     justify-content: center;
     background-color: default;
     align-self: center;
-  min-height: 450px;
+    min-height: 450px;
     flex: 3; /* make the container grow to fill the available space */
     min-width: 800px;
 }
