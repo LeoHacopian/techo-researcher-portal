@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Tabs, Tab, Box } from '@mui/material';
 import QForm from '../qForm/qForm'
 import Preview from '../Preview/Preview';
+import './QPortalNavbar.css';
 
 function QPortalNavbar() {
   const [value, setValue] = useState(0);
@@ -12,10 +13,14 @@ function QPortalNavbar() {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" centered>
-        <Tab label="Questions" />
-        <Tab label="Preview" />
+    
+    <Box className="navbar-container" >
+      <Tabs value={value} onChange={handleChange}  
+      TabIndicatorProps={{
+          style: { background: "grey"}
+        }}aria-label="basic tabs example" centered>
+        <Tab   sx={{ '&.Mui-selected': { color: '#424242' } }} label="Questions" />
+        <Tab  sx={{ '&.Mui-selected': { color: '#424242' } }} label="Preview" />
       </Tabs>
       <Box hidden={value !== 0}>
       <QForm questionsData={questionsData} setQuestionsData={setQuestionsData} />

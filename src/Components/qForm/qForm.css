@@ -27,15 +27,26 @@
 .qPortal {
     display: flex;
     flex-direction: column;
-    height: 300px; /* Set a fixed height */
-    overflow-y: scroll; /* Add a scrollbar when needed */
+  }
+
+  .tabbed-window-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow the container to grow and fill available space */
+    overflow-y: auto; /* Add a scrollbar when needed */
+
   }
   
-
-.wrapper {
-    position: relative;
-    background-color: #EDE3D1;
-}
+  .tabContentWrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow the container to grow and fill available space */
+    overflow-y: auto; /* Add a scrollbar when needed */
+    border: none;
+    border-radius: 12px;
+    outline: none;
+  }
+  
 
 .tabContentWrapper{
     background-color: white;
@@ -57,7 +68,6 @@
 
 .bottom-navbar {
     position: relative;
-    background-color: green;
     height: 80px;
     bottom: 0;
 }
@@ -67,7 +77,10 @@
   }
   
  
+ 
 
+
+ 
 
 
  

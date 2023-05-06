@@ -31,7 +31,7 @@ function QForm({ questionsData, setQuestionsData }) {
   useEffect(() => {
     const updatedQuestionsData = { ...questionsData, questions: { ...questions } };
     setQuestionsData(updatedQuestionsData);
-    console.log(questionsData)
+
   }, [questions, setQuestionsData]);
   
 
@@ -133,7 +133,7 @@ function QForm({ questionsData, setQuestionsData }) {
       }
       question.answers.forEach((answer, answerIndex) => {
         if (answer.answer === '') {
-          emptyFields.push(`Question ${questionIndex + 1} - Answer, ${answerIndex + 1}\n`);
+          emptyFields.push(`Question ${questionIndex + 1} - Answer ${answerIndex + 1},\n`);
         }
       });
    
@@ -265,7 +265,7 @@ function QForm({ questionsData, setQuestionsData }) {
                   <MenuItem value={'Slider'}>Slider</MenuItem>
                   <MenuItem value={'Textfield'}>Textfield</MenuItem>
                 </Select>
-                <Button onClick={() => handleRemoveFields(q.id)}>Delete</Button>
+                <Button onClick={() => handleRemoveFields(q.id)} variant="contained" color="error">Delete</Button>
                 <form className="qPortal">
                   { q.answers.map((answer, index) => (
                     <div className = "options" style={{ display: 'flex', flexDirection: 'row' }}>
@@ -277,6 +277,7 @@ function QForm({ questionsData, setQuestionsData }) {
                         label={getLabel(q, index)}
                         value={answer.answer}
                         onChange={event => handleChangeInput(q.id, index, event)}
+                      
                       />
                       
                       <div style={{ alignSelf: "center" }}>

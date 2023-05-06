@@ -1,32 +1,32 @@
 .tabbed-window-container{
     display: flex;
-    background-color: rgb(212, 79, 212);
+    background-color: default;
     margin: auto;
     align-items: center;
     justify-content: center;
     width: 100%; /* set the width to 100% to fill the container */
     min-width: 800px;
+    flex-direction: row; /* add this line to move the container to the right */
 }
 
 .tabs-container {
     display: flex;
     flex-direction: column;
     order: 1;
-    background-color: rgb(234, 204, 237);
+    background-color: default;
     min-height: 80px; /* set a minimum height in pixels */
-    max-height: 500px;
+
     flex: 1; /* make the container grow to fill the available space */
     max-width: 200px; /* set the maximum width to 800 pixels */
-  }
-  
+}
 
 .tabpanel-container{
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(216, 211, 107);
+    background-color: default;
     align-self: center;
-    height: 500px; /* set a fixed height in pixels */
+  min-height: 450px;
     flex: 3; /* make the container grow to fill the available space */
     min-width: 800px;
 }
