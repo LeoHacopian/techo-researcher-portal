@@ -24,7 +24,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(239, 220, 220);
+    background-color: rgb(216, 211, 107);
     align-self: center;
     height: 500px; /* set a fixed height in pixels */
     flex: 3; /* make the container grow to fill the available space */

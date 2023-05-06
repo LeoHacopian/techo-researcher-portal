@@ -4,9 +4,13 @@ import './Preview.css';
 
 function renderFormField(question,sliderValue, setSliderValue) {
   switch (question.type) {
+    case 'Textfield':
+      return (
+       <input type="text"/>
+      );
     case 'Checkbox':
       return (
-        <div style={{ marginLeft: '8px' }}>
+        <div >
           {question.answers.map((answer) => (
             <div key={answer.id}>
               <label className="label-answer">

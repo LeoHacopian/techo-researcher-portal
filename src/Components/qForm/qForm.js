@@ -83,7 +83,6 @@ function QForm({ questionsData, setQuestionsData }) {
     return false;
   };
   
-  
   const handleChangeInput = (id, index, event) => {
     const { name, value } = event.target;
     const updatedQuestions = questions.question.map((q) => {
@@ -93,6 +92,9 @@ function QForm({ questionsData, setQuestionsData }) {
         } else if (name === 'type') {
           if (value === 'Slider') {
             return { ...q, type: value, answers: [{ answer: '', id: uuidv4() }, { answer: '', id: uuidv4() }] };
+          }
+          if (value === 'Textfield') {
+            return { ...q, type: value, answers: [ ] };
           }
           return { ...q, type: value };
         } else if (name.includes('answers')) {
@@ -121,17 +123,20 @@ function QForm({ questionsData, setQuestionsData }) {
     }
     questions.question.forEach((question, questionIndex) => {
       if (question.prompt === '') {
-        emptyFields.push(`Question ${questionIndex + 1} - Prompt`);
+        emptyFields.push(`Question ${questionIndex + 1} - Prompt,\n`);
       }
       if (question.type === '') {
-        emptyFields.push(`Question ${questionIndex + 1} - Type`);
+        emptyFields.push(`Question ${questionIndex + 1} - Type,\n`);
+      }
+      if(!question.type === "Textfield" && question.answers.length === 0){
+        emptyFields.push(`Question ${questionIndex + 1} Answers,\n`);
       }
       question.answers.forEach((answer, answerIndex) => {
         if (answer.answer === '') {
-          emptyFields.push(`Question ${questionIndex + 1} - Answer ${answerIndex + 1}`);
+          emptyFields.push(`Question ${questionIndex + 1} - Answer, ${answerIndex + 1}\n`);
         }
       });
-      emptyFields.push('\n'); 
+   
     });
   
     return emptyFields;
@@ -141,6 +146,7 @@ function QForm({ questionsData, setQuestionsData }) {
   const handleSubmit = () => {
    
     const emptyFields = checkEmptyFields();
+    console.log(emptyFields.length)
     if (emptyFields.length > 0) {
       const errorMessage = `The following fields are empty: \n ${emptyFields.join(' ')}`;
       setErrorMessage(errorMessage);
@@ -195,7 +201,6 @@ function QForm({ questionsData, setQuestionsData }) {
       return `Option ${index + 1}`;
     }
   }
-
 
   const handleRemoveOption = (questionId, answerId) => {
     setQuestions(prevState => ({
@@ -258,10 +263,11 @@ function QForm({ questionsData, setQuestionsData }) {
                 >
                   <MenuItem value={'Checkbox'}>Checkbox</MenuItem>
                   <MenuItem value={'Slider'}>Slider</MenuItem>
+                  <MenuItem value={'Textfield'}>Textfield</MenuItem>
                 </Select>
                 <Button onClick={() => handleRemoveFields(q.id)}>Delete</Button>
                 <form className="qPortal">
-                  {q.answers.map((answer, index) => (
+                  { q.answers.map((answer, index) => (
                     <div className = "options" style={{ display: 'flex', flexDirection: 'row' }}>
                       <TextField
                         key={answer.id}
@@ -282,7 +288,7 @@ function QForm({ questionsData, setQuestionsData }) {
                       </div>
                     </div>
                   ))}
-               {q.type !== "Slider" && (
+               {q.type !== "Slider" && q.type !== "Textfield" &&(
                   <TextField
                   style={{ width: "120px", margin: "5px" }}
                   label="Add Option"
