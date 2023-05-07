@@ -11,7 +11,8 @@ import axios from 'axios';
 
 import GenericTabPanel from '../GenericTabPanel/GenericTabPanel';
 import ErrorMessageSnackbar from '../ErrorMessageSnackbar/ErrorMessageSnackbar';
-import SignUpModal from '../SignUpModal/SignUpModal';
+import LoginModal from '../LoginModal/LoginModal';
+import SignUpModal from '../SignUpModal/SignUpModal'
 
 function QForm({ questionsData, setQuestionsData }) {
 
@@ -23,15 +24,8 @@ function QForm({ questionsData, setQuestionsData }) {
   const [openSliderErrorMessage, setOpenSliderErrorMessage]= useState(false);
   const [sliderErrorMessage, setSliderErrorMessage]= useState('');
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
 
   const [questions, setQuestions] = useState({
     question: [
@@ -45,6 +39,22 @@ function QForm({ questionsData, setQuestionsData }) {
 
   }, [questions, setQuestionsData]);
   
+
+  const handleLoginModalOpen = () => {
+    setIsLoginModalOpen(true);
+  };
+
+  const handleLoginModalClose = () => {
+    setIsLoginModalOpen(false);
+  };
+
+  const handleSignUpModalOpen = () => {
+    setIsSignUpModalOpen(true);
+  };
+
+  const handleSignUpModalClose = () => {
+    setIsSignUpModalOpen(false);
+  };
 
   const addQuestion = () => {
     setQuestions(prevState => ({
@@ -229,10 +239,15 @@ function QForm({ questionsData, setQuestionsData }) {
   };
   return (
     <div>
-      <Button variant="contained" onClick={handleModalOpen}>
+      <Button variant="contained" onClick={handleLoginModalOpen}>
+        Login
+      </Button>
+      <LoginModal isOpen={isLoginModalOpen} onClose={handleLoginModalClose} />
+      <Button variant="contained" onClick={handleSignUpModalOpen}>
         Sign Up
       </Button>
-      <SignUpModal isOpen={isModalOpen} onClose={handleModalClose} />
+      <SignUpModal isOpen={isSignUpModalOpen} onClose={handleSignUpModalClose} />
+
        <ErrorMessageSnackbar
       open={openErrorMessage}
       message={errorMessage}
@@ -280,7 +295,7 @@ function QForm({ questionsData, setQuestionsData }) {
                   <MenuItem value={'Slider'}>Slider</MenuItem>
                   <MenuItem value={'Textfield'}>Textfield</MenuItem>
                 </Select>
-                <Button onClick={() => handleRemoveFields(q.id)} variant="contained" color="error">Delete</Button>
+                <Button onClick={() => handleRemoveFields(q.id)} color="error">Delete</Button>
                 <form className="qPortal">
                   { q.answers.map((answer, index) => (
                     <div className = "options" style={{ display: 'flex', flexDirection: 'row' }}>

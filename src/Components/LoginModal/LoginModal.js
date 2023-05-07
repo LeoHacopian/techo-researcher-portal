@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { Link, Button, Modal, TextField, Box } from '@mui/material';
 
-import './SignUpModal.css'
+import './LoginModal.css'
 
-const SignUpModal = ({ isOpen, onClose }) => {
+const LoginModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     email: '',
     username: '',
     password: '',
     confirmPassword: '',
   });
-  const [isSignUpModal, setIsSignUpModal] = useState(true);
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -28,7 +28,7 @@ const SignUpModal = ({ isOpen, onClose }) => {
   };
 
   const toggleMode = () => {
-    setIsSignUpModal(!isSignUpModal);
+    setIsSignUpMode(!isSignUpMode);
     setFormData({
       email: '',
       username: '',
@@ -52,7 +52,7 @@ const SignUpModal = ({ isOpen, onClose }) => {
     // Access the form data from the formData state variable here
     console.log(formData.email);
     console.log(formData.password);
-    if (isSignUpModal) {
+    if (isSignUpMode) {
       console.log(formData.username);
       console.log(formData.confirmPassword);
       console.log("handling sign up")
@@ -92,7 +92,7 @@ const SignUpModal = ({ isOpen, onClose }) => {
           height: '470px', // set the height to 400px
         }}
       >
-        <h2>{isSignUpModal ? 'Sign Up' : 'Log In'}</h2>
+        <h2>{isSignUpMode ? 'Sign Up' : 'Log In'}</h2>
         <div style={{ color: 'red', fontWeight: 600 }}>
                 {hasError ? <div>Please fill out all the fields.</div> : null}
         </div>
@@ -107,7 +107,7 @@ const SignUpModal = ({ isOpen, onClose }) => {
             value={formData.email}
             onChange={handleChange}
           />
-          {isSignUpModal && (
+          {isSignUpMode && (
             <TextField
               name="username"
               type="username"
@@ -135,14 +135,8 @@ const SignUpModal = ({ isOpen, onClose }) => {
                 </Button>
               ),
             }}
-            error={isSignUpModal && formData.password.length < 8 && formData.password.length > 0}
-            helperText={
-              isSignUpModal && formData.password.length < 8 && formData.password.length > 0
-                ? "Password must be at least 8 characters long"
-                : null
-            }
           />
-           {isSignUpModal && (
+           {isSignUpMode && (
           <TextField
             name="confirmPassword"
             type="password"
@@ -161,14 +155,15 @@ const SignUpModal = ({ isOpen, onClose }) => {
         />
       )}
           <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-            {isSignUpModal ? 'Sign Up' : 'Log In'}
+            {isSignUpMode ? 'Sign Up' : 'Log In'}
           </Button>
           <br></br> 
           <Button
             sx={{ ml: 'auto', pl: 32 }}
+          
             onClick={toggleMode}
           >
-            {isSignUpModal
+            {isSignUpMode
               ? 'Already have an account? Log in.'
               : 'Don\'t have an account? Sign up.'}
           </Button>
@@ -178,4 +173,4 @@ const SignUpModal = ({ isOpen, onClose }) => {
   );
 };
 
-export default SignUpModal;
+export default LoginModal;

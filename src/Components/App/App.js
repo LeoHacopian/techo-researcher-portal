@@ -1,6 +1,7 @@
 // App.js
 import React from 'react';
 import QPortalNavbar from '../QPortalNavbar/QPortalNavbar'
+
 import './App.css';
 
 
